@@ -1,6 +1,6 @@
 # 安装node环境
 
-> 安装
+> 知识大纲
 * 去[官网](https://nodejs.org/en/)下载
 * 官网会根据操作系统智能识别，这里我用的是windows，所以映入眼帘的是
 
@@ -8,8 +8,14 @@
     
 * 左边的LTS为稳定版，推荐下载稳定版
 * 右边的是最新版本，不建议使用最新版本
-* 下载后傻瓜是安装即可，然后通过cmd，输入指令`node -v`能看到版本信息就说明安装成功了
-* [补充-淘宝镜像 ](https://npm.taobao.org/)  
+* 下载后傻瓜式安装即可，然后通过cmd，输入指令`node -v`能看到版本信息就说明安装成功了
+* [补充-淘宝镜像](https://npm.taobao.org/),`npm install -g cnpm --registry=https://registry.npm.taobao.org`,
+    这是一个完整 npmjs.org 镜像，你可以用此代替官方版本(只读)，同步频率目前为 10分钟 一次以保证尽量与官方服务同步。 
+    
+* 使用cnpm的原因是   
+
+    ![](./images/为什么使用cnpm.jpg)  
+    
 
 > 练习
 * 我们先新建个index.js，里面就随意写行打印语句

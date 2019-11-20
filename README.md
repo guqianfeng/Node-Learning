@@ -12,4 +12,5 @@
     * [day-01-安装node环境](./Day01-15/day-01/安装node环境.md)
     * [day-02-本地搭服务器](./Day01-15/day-02/本地搭服务器.md)
     * [day-03-模块化](./Day01-15/day-03/模块化.md)
+    * [day-04-node_modules](./Day01-15/day-04/node_modules.md)
 

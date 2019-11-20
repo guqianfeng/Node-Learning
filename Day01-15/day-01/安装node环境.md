@@ -16,6 +16,27 @@
 
     ![](./images/为什么使用cnpm.jpg)  
     
+* yarn包管理工具 `npm install -g yarn`
+
+    ![](./images/yarn常用指令.png)
+    
+* 使用NVM（Node Version Manager）控制Node.js版本 
+
+    * Nvm-windows  下载地址 https://github.com/coreybutler/nvm-windows   下载 nvm-setup.zip
+
+* NVM常用指令
+    * ``nvm --version查看版本``
+    * ``nvm install stable //安装最新稳定版nodejs``
+    * ``nvm install 8.11.1  //安装指定版本``
+    * ``nvm install 8.11     //安装 8.11.x系列最新版本``
+    * ``nvm ls-remote      //列出远程服务器上所有可用的版本``
+    * ``nvm use 8.11.1    //切换到8.11.1版本``
+    * ``nvm use 8.11      //切换到8.11.x最新版本``
+    * ``nvm use node   //切换到最新版本``
+    * ``nvm alias default node //设置默认版本为最新版本``
+    * ``nvm ls   //列出所有已经安装的版本``     
+        
+    
 
 > 练习
 * 我们先新建个index.js，里面就随意写行打印语句

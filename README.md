@@ -13,4 +13,5 @@
     * [day-02-本地搭服务器](./Day01-15/day-02/本地搭服务器.md)
     * [day-03-模块化](./Day01-15/day-03/模块化.md)
     * [day-04-node_modules](./Day01-15/day-04/node_modules.md)
+    * [day-05-npm包管理](./Day01-15/day-05/npm包管理.md)
 

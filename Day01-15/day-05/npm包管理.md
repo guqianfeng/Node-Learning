@@ -3,7 +3,6 @@
 * **npm:包管理器**
 * 一般第三方的都会放在node_modules
 * 引用的模块没找到会依次往上找
-* 可以使用指令`npm root -g`找到全局安装的模块
 * [官方网址](https://www.npmjs.com/),大佬们会把写的好的模块上传，然后我们可以通过`npm i xxxx`去安装
 * 指令的一些细节
     * i是install 的简写
@@ -17,6 +16,9 @@
     * 那package.json文件里面的 devDependencies和dependencies对象有什么区别呢？
     
     * devDependencies里面的插件只用于开发环境，不用于生产环境，而dependencies是需要发布到生产环境的。
+
+* `npm i xxxx -g`全局安装，什么时候用到全局，就是很多项目都会用到的我们可以使用全局安装    
+* 可以使用指令`npm root -g`找到全局安装的模块 
         
 > 回顾
 1. `const http = require("http");`，这段代码在之前本地搭建服务器的时候我们已经用过了

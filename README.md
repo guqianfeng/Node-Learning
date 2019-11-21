@@ -15,4 +15,5 @@
     * [day-04-node_modules](./Day01-15/day-04/node_modules.md)
     * [day-05-npm包管理](./Day01-15/day-05/npm包管理.md)
     * [day-06-npm常用指令](./Day01-15/day-06/npm常用指令.md)
+    * [day-07-文件操作](./Day01-15/day-07/文件操作.md)
 

@@ -14,4 +14,5 @@
     * [day-03-模块化](./Day01-15/day-03/模块化.md)
     * [day-04-node_modules](./Day01-15/day-04/node_modules.md)
     * [day-05-npm包管理](./Day01-15/day-05/npm包管理.md)
+    * [day-06-npm常用指令](./Day01-15/day-06/npm常用指令.md)
 

@@ -64,7 +64,7 @@
         
 * 如何在服务端node环境执行index.js，具体操作如下
     1. 打开终端,进入到index.js对应的目录
-    2. 执行`node index`,这里**index.js**的**.js**可以省略
+    2. 执行`node index`,这里**index.js**的.js可以省略
     3. 截图如下
     
         ![](./images/服务端执行.jpg)

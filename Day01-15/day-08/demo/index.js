@@ -33,14 +33,29 @@ fs.mkdir("123456", err => {
     console.log(flag);
 });*/
 
-fs.stat("2.js", (err,stat) => {
+/*fs.stat("2.js", (err,stat) => {
     if(err){
         return console.log(err);
     }
     console.log(stat);
     console.log(stat.isFile());
     console.log(stat.isDirectory());
-});
+});*/
 
+function removeDir(path){
+    let data = fs.readdirSync(path);
+    data.forEach(item => {
+        let newPath = `${path}/${item}`;
+        let stat = fs.statSync(newPath);
+        if(stat.isFile()){
+            fs.unlinkSync(newPath);
+        }else{
+            removeDir(newPath);
+        }
+    });
+    fs.rmdirSync(path);
+}
+
+removeDir("../../day-01");
 
 

@@ -22,7 +22,7 @@
     
 * 使用NVM（Node Version Manager）控制Node.js版本 
 
-    * Nvm-windows  下载地址 https://github.com/coreybutler/nvm-windows   下载 nvm-setup.zip
+    * Nvm-windows  [下载地址](https://github.com/coreybutler/nvm-windows) 下载nvm-setup.zip
 
 * NVM常用指令
     * ``nvm --version查看版本``

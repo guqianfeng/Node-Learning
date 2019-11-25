@@ -212,7 +212,9 @@
     script(type="text/javascript").
         console.log(111);
     ``` 
-26. 还有一些其他语法我就不一一列举了，比如if else,小伙伴们可以自行查找资料    
+26. 还有一些其他语法我就不一一列举了，比如if else,小伙伴们可以自行查找资料   
+ 
 > 知道你不过瘾继续吧
 * [目录](../../README.md)
 * [上一篇-stream流](../day-10/stream流.md)
+* [下一篇-Nunjucks模板引擎](../day-12/Nunjucks模板引擎.md)

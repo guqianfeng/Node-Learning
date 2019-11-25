@@ -1,0 +1,57 @@
+html
+    head
+        title TEST-PUG
+        style.
+            .box{
+                width: 200px;
+                height: 200px;
+                background-color: skyblue;
+                text-align: center;
+                margin: 5px;
+            }
+    body
+        h1 hello pug
+        // 测试html注释
+        div 我是div
+        //
+           111111111111
+           222222222222
+        div(class="box") 我是有class的div
+        .box(style={width: "400px", height: "400px", background: "red"}) 我是简写的div
+        #wrap 我也是简写的
+        //- 测试下注释
+        //-
+            多行注释也是可以这么写的
+            我是多行注释
+            我也是多行注释
+        div
+            hello
+        div
+            | hello
+        - let str = "你好"
+        p #{str}
+        p #{data}
+        ul
+            each item,index in users
+                li 姓名是 #{item.name} 年龄是 #{item.age} 索引是 #{index}
+        - for(let i = 0; i < 5; i++)
+            div for循环的值 -> #{i}
+        - let num = 12;
+            case num
+                when 1
+                    p num是1
+                when 2
+                    p num是2
+                default
+                    p num是其他
+        mixin mydiv
+            div 我是非常常用的
+        +mydiv
+        +mydiv
+        mixin pet(name,sex)
+            p 宠物的名字是#{name},它的性别是 #{sex}
+        +pet("大黄","公")
+        include common
+        script(type="text/javascript").
+            console.log(111);
+

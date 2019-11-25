@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>换个模板玩玩</h1>
+    <p>用户名是 {{username}}</p>
+    {# 判断语句 #}
+    {% if num>3 %}
+        <p>num是大于3的</p>
+    {% elseif num<3 %}
+        <p>num是小于3的</p>
+    {% else %}
+        <p>num就是3</p>
+    {% endif %}
+    {# 循环语句 #}
+    <ul>
+        {% for item in arr %}
+        <li>{{item.petName}}  {{item.age}}</li>
+        {% endfor %}
+    </ul>
+    <p>{{str}}</p>
+    <p>{{str | replace("world", "世界")}}</p>
+    <p>{{str | replace("world", "世界") | capitalize}}</p>
+
+    {% macro introduce(name, desc) %}
+        <p>我的名字叫{{name}}, {{desc}}</p>
+    {% endmacro %}
+    {% macro myjob(jobName, desc) %}
+        <p>我的工作是{{jobName}}, {{desc}}</p>
+    {% endmacro %}
+
+    {{introduce("gqf", "我是个天才")}}
+
+    {% include 'footer.html' %}
+</body>
+</html>

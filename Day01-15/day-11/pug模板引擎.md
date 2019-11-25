@@ -2,6 +2,7 @@
 > 知识大纲
 * 模板引擎 - web应用中动态生成html的工具
 * 本章介绍的是pug模板，原名是jade
+* [html转化jade](http://html2jade.org/)
 
 > 练习
 1. 在demo下初始化package.json, `cnpm init -y`

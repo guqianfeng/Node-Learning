@@ -26,3 +26,7 @@
     * [day-14-ajax的请求方式](./Day01-15/day-14/ajax的请求方式.md)
     * [day-15-同步及异步ajax](./Day01-15/day-15/同步及异步ajax.md)
 
+* Day16-30
+
+    * [day-16-xml数据返回](./Day16-30/day-16/xml数据返回.md)    
+

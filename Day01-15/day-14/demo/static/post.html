@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <form action="" enctype="application/x-www-form-urlencoded"></form> -->
+    <button>发送ajax请求</button>
+    <script>
+        {
+            let button = document.querySelector("button");
+            button.addEventListener("click", e => {
+                let xhr = new XMLHttpRequest();
+                xhr.open("post", "/post", true);
+                xhr.onload = function(){
+                    console.log(JSON.parse(xhr.responseText));
+                    console.log(xhr.getAllResponseHeaders());
+                    console.log(xhr.getResponseHeader("Content-Type"));
+                };
+                // xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded"); // 默认的编码格式
+                // let data = "username=王五&age=20";
+                xhr.setRequestHeader("Content-Type", "application/json");
+                let data = JSON.stringify({
+                    username: "王五",
+                    age: 20,
+                })
+                xhr.send(data);
+            })
+        }
+    </script>
+</body>
+</html>

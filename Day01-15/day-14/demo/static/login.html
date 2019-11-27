@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <label for="username">username</label><input type="text" id="username" name="username"> <span id="info"></span>
+    </div>
+    <div>
+        <label for="password">password</label><input type="password" id="password" name="password">
+    </div>
+    <div>
+        <button>登陆</button>
+        <button>注册</button>
+    </div>
+    <script>
+        {
+          let usernameInput = document.querySelector("#username");
+          let infoSpan = document.querySelector("#info");
+          usernameInput.addEventListener("blur", function(){
+            //   console.log("失去焦点");
+            let username = this.value;
+            let xhr = new XMLHttpRequest();
+            xhr.open("get", `/checkUsername?username=${username}`, true);
+            xhr.onload = function(){
+                let res = JSON.parse(xhr.responseText);
+                // console.log(res, res.status);
+                infoSpan.innerHTML = res.msg;
+                infoSpan.style.color = ["green", "red"][res.status];
+            }
+            xhr.send();
+          }) 
+        }
+    </script>
+</html>

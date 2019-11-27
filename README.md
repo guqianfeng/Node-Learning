@@ -24,4 +24,5 @@
     * [day-12-Nunjucks模板引擎](./Day01-15/day-12/Nunjucks模板引擎.md)
     * [day-13-如何验证用户名](./Day01-15/day-13/如何验证用户名.md)
     * [day-14-ajax的请求方式](./Day01-15/day-14/ajax的请求方式.md)
+    * [day-15-同步及异步ajax](./Day01-15/day-15/同步及异步ajax.md)
 

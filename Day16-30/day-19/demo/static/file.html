@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" class="myfile">
+    进度: <progress value="0" max="100"></progress> <!-- 进度条value当前进度max最大值 -->
+    速度: <span class="speed"></span> <!-- 先静态页面布局，写死个假数据 -->
+    <button>点击上传</button>
+    <button>取消上传</button>
+    <script>
+        {
+            let xhr = new XMLHttpRequest(); //因为要取消上传，所以放在最外面
+            let startTime;
+            let currentSize;
+
+            let aBtn = document.querySelectorAll("button");
+            let oInput = document.querySelector("input.myfile");
+            //上传
+            aBtn[0].addEventListener("click", function(){
+                let file = oInput.files[0];
+                // console.log(file);
+                let formData = new FormData();
+                formData.append("file", file); //这里的key必须是file,请看下我们的后端代码就知道了
+                xhr.open("post", "/upload", true);
+                xhr.onload = function(){
+                    console.log(xhr.responseText);
+                } 
+                xhr.upload.addEventListener("loadstart", function(){
+                    console.log("开始上传");
+                    startTime = new Date().getTime();
+                    currentSize = 0;
+                })
+                xhr.upload.addEventListener("progress", function(e){
+                    let endTime = new Date().getTime();
+                    let disTime = (endTime - startTime) / 1000;
+                    let disSize = e.loaded - currentSize;
+                    let speed = disSize / disTime; 
+                    let unit = "b/s";
+                    if(speed / 1024 > 1){
+                        speed = speed / 1024; 
+                        unit = "kb/s";
+                    }
+                    if(speed / 1024 > 1){
+                        speed = speed / 1024;
+                        unit = "mb/s";
+                    }
+                    if(speed / 1024 > 1){
+                        speed = speed / 1024;
+                        unit = "gb/s";
+                    }
+                    // console.log(speed.toFixed(2) + " " + unit);
+                    let showSpeed = speed.toFixed(2) + " " + unit;
+                    document.querySelector(".speed").innerHTML = showSpeed;
+                    startTime = new Date().getTime();
+                    currentSize = e.loaded;
+                    // console.log("正在上传");
+                    // console.log(e.loaded, e.total, (e.loaded / e.total * 100).toFixed(0) + "%");
+                    let percent = (e.loaded / e.total * 100).toFixed(0);
+                    document.querySelector("progress").value = percent;
+                })
+                xhr.upload.addEventListener("load", function(){
+                    console.log("上传成功");
+                    
+                })
+                xhr.upload.addEventListener("loadend", function(){
+                    console.log("上传完成");
+                    
+                })
+                xhr.upload.addEventListener("abort", function(){
+                    console.log("上传取消");
+                    
+                })
+                xhr.send(formData);
+            })
+            //取消上传
+            aBtn[1].addEventListener("click", function(){
+                xhr.abort();
+            })
+        }
+    </script>
+</body>
+</html>

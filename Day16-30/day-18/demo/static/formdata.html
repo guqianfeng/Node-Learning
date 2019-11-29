@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" class="myfile">
+    <button>上传</button>
+    <script>
+        {
+            let oBtn = document.querySelector("button");
+            let oInput = document.querySelector(".myfile");
+
+            oBtn.addEventListener("click", e => {
+                // console.log(oInput.files);
+                let file = oInput.files[0];
+                let formData = new FormData();
+                formData.append("file", file);
+                formData.append("somekey", "somevalue");
+                let xhr = new XMLHttpRequest();
+                xhr.open("post", "/upload", true);
+                xhr.onload = function(){
+                    console.log(JSON.parse(xhr.responseText));
+                }
+                xhr.send(formData);
+            })
+        }
+    </script>
+</body>
+</html>

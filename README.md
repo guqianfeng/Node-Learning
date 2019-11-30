@@ -32,4 +32,5 @@
     * [day-17-FormData实现文件上传](./Day16-30/day-17/FormData实现文件上传.md)    
     * [day-18-上传文件事件钩子](./Day16-30/day-18/上传文件事件钩子.md)    
     * [day-19-上传进度及速度](./Day16-30/day-19/上传进度及速度.md)    
+    * [day-20-ajax不能跨域](./Day16-30/day-20/ajax不能跨域.md)    
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <h1>在3000端口玩耍ajax</h1>
+    <button>发送ajax请求</button>
+    <script>
+        {
+            let oBtn = document.querySelector("button");
+            oBtn.addEventListener("click", e => {
+                let xhr = new XMLHttpRequest();
+                // xhr.open("get", "/getData", true); //同源
+                xhr.open("get", "http://localhost:4000/getData", true); //跨域
+                xhr.onload = function(){
+                    console.log(JSON.parse(xhr.responseText));
+                }
+                xhr.send();
+            })
+        }
+    </script>
+</body>
+</html>

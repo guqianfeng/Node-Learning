@@ -19,7 +19,15 @@ router.get("/getData", ctx => {
 })
 
 router.get("/getJsonp", ctx => {
-    ctx.body = "let a = 10;"
+    // ctx.body = "let a = 10;"
+    let cb = ctx.query.cb;
+    let resultObj = {
+        a: 10,
+        b: "20",
+        c: "我随意传入个字符串试试",
+        d: true,
+    }
+    ctx.body = `${cb}(${JSON.stringify(resultObj)})`;
 })
 
 app.listen(4000); 

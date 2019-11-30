@@ -93,7 +93,76 @@
         ![](./images/打印a.jpg)  
 
     5. 以上代码就是最简单的一个jsonp的实现   
-    6. 但这样的实现并不是很好，我们可以动态创建script实现请求   
+    6. 但这样的实现并不是很好，我们可以动态创建script实现请求
+    7. 我们在重新新开个页面，在3000的项目中的static下新建个jsonp.html
+        ```html
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+        </head>
+        <body>
+            <h1>动态创建script</h1>
+            <button>动态的哦</button>
+            <script>
+                {
+                    let oBtn = document.querySelector("button");
+                    oBtn.addEventListener("click", e => {
+                        let scriptEle = document.createElement("script");
+                        scriptEle.src = "http://localhost:4000/getJsonp";
+                        document.querySelector("head").appendChild(scriptEle);
+                        //console.log(a) //这个会报错,因为还没有加载好scirpt标签
+                        scriptEle.onload = function(){
+                            //注意这里一定要onload否则取不到a，因为是异步的
+                            console.log(a);
+                        }
+                    },{once: true})
+                }
+            </script>
+        </body>
+        </html>
+        ```
+    8. 虽然前端页面依然能拿到我们的值，但这样的写法并不好，一般我们会传入一个回调函数，然后由后端在处理好返回给我们，代码如下 
+        1. 先来看下3000里的页面该怎么写
+            ```js
+            function cbfn(res){
+                console.log(res);
+            }
+
+            let oBtn = document.querySelector("button");
+            oBtn.addEventListener("click", e => {
+                let scriptEle = document.createElement("script");
+                scriptEle.src = "http://localhost:4000/getJsonp?cb=cbfn";
+                document.querySelector("head").appendChild(scriptEle);
+                //console.log(a) //这个会报错,因为还没有加载好scirpt标签
+                scriptEle.onload = function(){
+                    //注意这里一定要onload否则取不到a，因为是异步的
+                    // console.log(a);
+                }
+                
+            },{once: true})
+            ```  
+        2. 注意2个地方，在这个页面里面首先我们先定义了cbfn的函数，它调用的时机，其实是在后端传入的script中才会去调用，其次看我们ajax的url,我们在url后面拼接了query,`cb=cbfn`,cb作为个key，是让后端去取，cbfn则是我们定义的方法名，可以让后端动态的获取，方便之后jsonp传回前端在调用
+        3. 我们在来看下4000的后端代码就知道了
+            ```js
+            router.get("/getJsonp", ctx => {
+                // ctx.body = "let a = 10;"
+                let cb = ctx.query.cb; //拿到前端定义的方法名
+                let resultObj = {
+                    a: 10,
+                    b: "20",
+                    c: "我随意传入个字符串试试",
+                    d: true,
+                }
+                ctx.body = `${cb}(${JSON.stringify(resultObj)})`; //这边就是传入前端后,在调用这个方法，把具体需要的值传进去前端就能拿到
+            })
+            ```
+        4. 页面操作把就可以看到效果了 
+
+            ![](./images/jsonp奥义.png)      
 
 > 知道你不过瘾继续吧
 * [目录](../../README.md)

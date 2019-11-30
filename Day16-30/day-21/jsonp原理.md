@@ -162,7 +162,10 @@
             ```
         4. 页面操作把就可以看到效果了 
 
-            ![](./images/jsonp奥义.png)      
+            ![](./images/jsonp奥义.png) 
+
+7. 我们做一个jsonp的ajax封装 
+    1. 我们先来封装ajax,在3000的static下新建个工具类`utils.js`            
 
 > 知道你不过瘾继续吧
 * [目录](../../README.md)

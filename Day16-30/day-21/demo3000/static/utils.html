@@ -11,7 +11,7 @@
     <script src="/utils.js"></script>
     <script>
         {
-            ajax({
+            /* ajax({
                 url: "/testGetAjax",
                 data: {
                     name: "gqf",
@@ -20,8 +20,8 @@
                 success(res){
                     console.log(res);
                 }
-            })
-            ajax({
+            }) */
+            /* ajax({
                 url: "/testPostAjax",
                 method: "post",
                 data: {
@@ -29,6 +29,19 @@
                     b: true,
                     c: 3
                 },
+                success(res){
+                    console.log(res);
+                }
+            }) */
+            ajax({
+                url: "http://localhost:4000/getJsonp",
+                method: "post",
+                data: {
+                    a: "1",
+                    b: true,
+                    c: 3
+                },
+                dataType: "jsonp",
                 success(res){
                     console.log(res);
                 }

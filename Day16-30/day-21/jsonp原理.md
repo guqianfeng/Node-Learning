@@ -281,7 +281,108 @@
 
         ![](./images/后端打印的日志.jpg)
 
-        ![](./images/success回调函数.jpg)               
+        ![](./images/success回调函数.jpg) 
+
+    6. 接着融入jsonp    
+        ```js
+        function ajax(opts) {
+            let defaultOptions = {
+                url: "",
+                method: "get",
+                data: "",
+                async: true,
+                //<form action="" enctype="application/x-www-form-urlencoded"></form>
+                header: {
+                    "content-type": "application/x-www-form-urlencoded"
+                },
+                dataType: "json",
+                jsonp: "cb",
+                success(res) {
+
+                }
+            }
+            let newOpts = Object.assign(defaultOptions, opts);
+
+            //处理jsonp,dataType需要传入jsonp
+            if(newOpts.dataType === "jsonp"){
+                jsonpFn(newOpts.url,newOpts.data,newOpts.jsonp,newOpts.success);
+                return; //jsonp请求就不需要后面的ajax了所以return
+            }
+
+            let xhr = new XMLHttpRequest();    
+            if(newOpts.method.toLowerCase() === "get"){
+                xhr.open(newOpts.method, newOpts.url + "?" + obj2UrlStr(newOpts.data), newOpts.async);
+            }else{
+                xhr.open(newOpts.method, newOpts.url, newOpts.async);
+            }
+            xhr.setRequestHeader("content-type", newOpts.header["content-type"])
+            xhr.onload = function () {
+                newOpts.success(newOpts.dataType === "json" ? JSON.parse(xhr.responseText) : xhr.responseText);
+            }
+            if(newOpts.method.toLowerCase() === "get"){
+                xhr.send()
+            }else{
+                xhr.send(obj2UrlStr(newOpts.data))
+            }
+        }
+
+        function obj2UrlStr(obj) {
+            return Object.keys(obj).map(item => item + "=" + obj[item]).join("&");
+        }
+
+
+        function jsonpFn(url, data, cbName, cbFn){
+            let fnName = "GQF_" + Math.random().toString(16).substring(2);
+            window[fnName] = cbFn;
+            let path = url + "?" + obj2UrlStr(data) + "&" + cbName + "=" + fnName;
+            let scriptEle = document.createElement("script");
+            scriptEle.src = path;
+            document.querySelector("head").appendChild(scriptEle);
+        }
+
+        ``` 
+    7. 主要的几点改动在这里
+        1. 默认参数了新增一个`jsonp: "cb"`,这个就是回调函数的名字，我们后端也是通过`let cb = ctx.query.cb;`这个去获取的
+        2. 根据dataType传入jsonp去判断，如果是jsonp那就不需要执行之后的ajax了
+            ```js
+            //处理jsonp,dataType需要传入jsonp
+            if(newOpts.dataType === "jsonp"){
+                jsonpFn(newOpts.url,newOpts.data,newOpts.jsonp,newOpts.success);
+                return; //jsonp请求就不需要后面的ajax了所以return
+            }
+            ```    
+        3. 封装的jsonpFn函数  
+            ```js
+            function jsonpFn(url, data, cbName, cbFn){
+                let fnName = "GQF_" + Math.random().toString(16).substring(2);
+                window[fnName] = cbFn;
+                let path = url + "?" + obj2UrlStr(data) + "&" + cbName + "=" + fnName;
+                let scriptEle = document.createElement("script");
+                scriptEle.src = path;
+                document.querySelector("head").appendChild(scriptEle);
+            }
+            ```
+    8. 然后我们就可以试下我们写的jsonp了
+        ```js
+        ajax({
+            url: "http://localhost:4000/getJsonp",
+            method: "post",
+            data: {
+                a: "1",
+                b: true,
+                c: 3
+            },
+            dataType: "jsonp",
+            success(res){
+                console.log(res);
+            }
+        })
+        ```
+    9. 调试结果如下
+
+        ![](./images/jsonp封装后的调试.jpg)
+
+        ![](./images/jsonp封装后调试的控制台.jpg)                           
 
 > 知道你不过瘾继续吧
 * [目录](../../README.md)

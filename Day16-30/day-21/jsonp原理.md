@@ -165,7 +165,123 @@
             ![](./images/jsonp奥义.png) 
 
 7. 我们做一个jsonp的ajax封装 
-    1. 我们先来封装ajax,在3000的static下新建个工具类`utils.js`            
+    1. 首先我们先来弄后端吧，在3000的项目中，需要安装koa-body在使用中间件的写法引入下(为了之后测试post请求)
+    2. 然后开始编写我们的代码
+        ```js
+        router.get("/testGetAjax", ctx => {
+            let queryObj = ctx.request.query;
+            console.log("GET请求--------------------------")
+            console.log(queryObj);
+            ctx.body = {
+                status: 1,
+                msg: "get请求成功"
+            }
+            
+        })
+
+        router.post("/testPostAjax", ctx => {
+            let bodyObj = ctx.request.body;
+            console.log("POST请求--------------------------")
+            console.log(bodyObj);
+            ctx.body = {
+                status: 1,
+                msg: "post请求成功"
+            } 
+        })
+        ``` 
+    3. 这样后端的代码就写好了，然后我们在简单封装下ajax，在3000的static下新建个utils.js
+        ```js
+        function ajax(opts) {
+            //defaultOptions默认配置
+            let defaultOptions = {
+                url: "",
+                method: "get",
+                data: "",
+                async: true,
+                //<form action="" enctype="application/x-www-form-urlencoded"></form>
+                header: {
+                    "content-type": "application/x-www-form-urlencoded"
+                },
+                dataType: "json",
+                success(res) {
+
+                }
+            }
+            let newOpts = Object.assign(defaultOptions, opts);
+            let xhr = new XMLHttpRequest();    
+            if(newOpts.method.toLowerCase() === "get"){
+                xhr.open(newOpts.method, newOpts.url + "?" + obj2UrlStr(newOpts.data), newOpts.async);
+            }else{
+                xhr.open(newOpts.method, newOpts.url, newOpts.async);
+            }
+            xhr.setRequestHeader("content-type", newOpts.header["content-type"])
+            xhr.onload = function () {
+                newOpts.success(newOpts.dataType === "json" ? JSON.parse(xhr.responseText) : xhr.responseText);
+            }
+            if(newOpts.method.toLowerCase() === "get"){
+                xhr.send()
+            }else{
+                xhr.send(obj2UrlStr(newOpts.data))
+            }
+        }
+
+        function obj2UrlStr(obj) {
+            return Object.keys(obj).map(item => item + "=" + obj[item]).join("&");
+        }
+
+        ``` 
+    4. 然后在static下新建个utils.html测试下我们写的ajax方法
+        ```html
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="X-UA-Compatible" content="ie=edge">
+            <title>Document</title>
+        </head>
+        <body>
+            <h1>测试下自己封装的ajax和jsonp</h1>
+            <script src="/utils.js"></script>
+            <script>
+                {
+                    ajax({
+                        url: "/testGetAjax",
+                        data: {
+                            name: "gqf",
+                            age: "27"
+                        },
+                        success(res){
+                            console.log(res);
+                        }
+                    })
+                    ajax({
+                        url: "/testPostAjax",
+                        method: "post",
+                        data: {
+                            a: "1",
+                            b: true,
+                            c: 3
+                        },
+                        success(res){
+                            console.log(res);
+                        }
+                    })
+                    
+                }
+            </script>
+        </body>
+        </html>
+        ```  
+    5. 看下结果
+
+        ![](./images/控制台看到发送的请求.jpg)
+
+        ![](./images/post组装的数据.jpg)
+
+        ![](./images/后端打印的日志.jpg)
+
+        ![](./images/success回调函数.jpg)               
 
 > 知道你不过瘾继续吧
 * [目录](../../README.md)

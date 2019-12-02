@@ -13,9 +13,13 @@
             let oBtn = document.querySelector("button");
             oBtn.addEventListener("click", e => {
                 let xhr = new XMLHttpRequest();
-                xhr.open("get", "http://localhost:4000/getData", true);
-                // xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded")
-                xhr.setRequestHeader("content-type", "application/json")
+                // xhr.open("get", "/getData", true);
+                // xhr.open("get", "http://localhost:4000/getData", true);
+                // xhr.open("post", "/test", true); //测试同源cookie
+                xhr.open("post", "http://localhost:4000/testData", true);
+                // xhr.setRequestHeader("content-type", "application/x-www-form-urlencoded");
+                xhr.setRequestHeader("content-type", "application/json");
+                xhr.withCredentials = true;
                 xhr.onload = function(){
                     console.log(JSON.parse(xhr.responseText));
                     console.log(xhr.getAllResponseHeaders());

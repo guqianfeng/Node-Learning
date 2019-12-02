@@ -45,7 +45,6 @@ router.post("/proxyData", async ctx => {
     })
     //console.log(res);   
     ctx.body = res.data;
-
 })
 
 app.listen(3000);

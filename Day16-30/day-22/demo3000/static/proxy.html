@@ -13,7 +13,8 @@
             let oBtn = document.querySelector("button");
             oBtn.addEventListener("click", e => {
                 let xhr = new XMLHttpRequest();
-                xhr.open("post", "/proxyData", true);
+                // xhr.open("post", "/proxyData", true);
+                xhr.open("post", "/api/testData", true);
                 xhr.onload = function(){
                     console.log(JSON.parse(xhr.responseText));
                 }

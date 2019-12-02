@@ -2,12 +2,18 @@ const Koa = require("koa")
 const Router = require("koa-router")
 const static = require("koa-static")
 const koaBody = require("koa-body")
+const axios = require("axios")
+const koaServerHttpProxy = require("koa-server-http-proxy")
 
 let app = new Koa();
 let router = new Router();
 
 app.use(static(__dirname + "/static"));
 app.use(koaBody());
+app.use(koaServerHttpProxy('/api', {
+    target: 'http://localhost:4000',
+    pathRewrite: { '^/api': '' }
+}))
 app.use(router.routes());
 
 router.get("/", ctx => {
@@ -30,6 +36,16 @@ router.post("/test", ctx => {
         name: "test",
         age: 999,
     }
+})
+
+router.post("/proxyData", async ctx => {
+    let res = await axios({
+        method: "post",
+        url: "http://localhost:4000/testData"
+    })
+    //console.log(res);   
+    ctx.body = res.data;
+
 })
 
 app.listen(3000);

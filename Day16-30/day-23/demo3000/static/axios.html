@@ -12,17 +12,56 @@
     <script>
         {
             // console.log(axios);
-            
-            axios({
-                method: "get",
-                url: "/users",
-            }).then(res => {
-                console.log(res.data);
+            //请求之前
+            axios.interceptors.request.use(config => {
+                console.log('request - first')
+                return config;
             })
+
+            //响应之后
+            axios.interceptors.response.use(res => {
+                console.log('response - first')
+                return res;
+            })
+
+            axios.interceptors.request.use(config => {
+                console.log("request - second");
+                return config;
+            })
+
+            axios.interceptors.response.use(res => {
+                console.log('response - second')
+                return res;
+            })
+
+            // axios({
+            //     method: "get",
+            //     url: "/users",
+            // }).then(res => {
+            //     console.log(res.data);
+            // })
 
             axios.get("/users").then(res => {
                 console.log(res.data);
             })
+
+            // axios({
+            //     method: "post",
+            //     url: "/users",
+            //     data: {
+            //         name: "test-1",
+            //         age: 30
+            //     }
+            // }).then(res => {
+            //     console.log(res.data);
+            // })
+
+            // axios.post("/users", {
+            //     name: "test - 2",
+            //     age: 40
+            // }).then(res => {
+            //     console.log(res.data);
+            // })
         }
     </script>
 </body>

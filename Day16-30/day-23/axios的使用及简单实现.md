@@ -165,8 +165,232 @@
 
         5. 这个就是用axios做代理服务，转发请求，实现了跨域请求的功能   
 
-* axios的简单实现            
+* axios的简单实现 
+    * 准备工作
+        1. 我们现在3000的项目下，新建一个myaxios.html和myaxios.js
+        2. 分别注入灵魂,这里提供下html的代码和js里的代码
+            ```html
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="ie=edge">
+                <title>Document</title>
+            </head>
+            <body>
+                <h1>myaxios - 自己简单封装下</h1>
+                <script src="/myaxios.js"></script>
+                <script>
+                    console.log("页面直接写的script")
+                </script>
+            </body>
+            </html>            
+            ```
+            ```js
+            console.log("自己封装的axios")
+            ```    
+        3. 然后打开页面就能看到
 
+            ![](./images/自己封装axios的准备工作.jpg)
+
+    * 开始封装简易的axios 
+        1. 先来看下原版axios使用时的一个代码
+            ```js
+            axios({
+                 method: "get",
+                 url: "/users",
+            }).then(res => {
+                 console.log(res.data);
+            })
+            ``` 
+        2. 明显这里是个函数，传入了个对象，并且这个函数返回了Promise,所以可以用.then，这里我们先不考虑对象的一些使用(如`axios.get`)
+        3. 我们先定义一个Axios的类吧
+            ```js
+            // console.log("自己封装的axios")
+            class Axios{
+                constructor(){
+
+                }
+                request(){
+                    console.log("发送请求")
+                }
+            }            
+            ```   
+        4. 如何让axios像函数这样使用，我们可以巧妙的这样写
+            ```js
+            // console.log("自己封装的axios")
+            class Axios{
+                constructor(){
+
+                }
+                request(){
+                    console.log("发送请求")
+                }
+            }
+
+            function createInstance(){
+                let context = new Axios();
+                let instance = context.request;
+                return instance;
+            }
+
+            let axios = createInstance();            
+            ``` 
+        5. 上述createInstance的函数，就是实例化了Axios，然后返回了实例，这个实例是request方法，但并没有执行，所以现在的axios就相当于Axios类中的request方法，这样写的好处之后我还会在提到，我们先在myaxios页面中尝试调用下`axios()`，然后就能看到控制塔斯就打印了**发送请求**  
+
+            ![](./images/看看控制台的发送请求.jpg)
+
+        6. 接下去我们就让request函数接受个config, 并且返回个Pormise看下结果，然后直接调用前面写的这个
+            ```js
+            request(config){
+                // console.log("发送请求")
+                console.log(config);
+                return new Promise((resolve, reject) => {
+                    resolve("then里面的res")
+                })
+            }            
+            ```
+            ```js
+            axios({
+                 method: "get",
+                 url: "/users",
+            }).then(res => {
+                 console.log(res);
+            })            
+            ```
+        7. 此时打开控制台就能看到 
+
+            ![](./images/接受config并返回Promise.jpg)    
+
+        8. 接下来我们来讲下混合模式，所谓混合模式，就是实现了axios即可以像函数这样执行，也可以像对象这样使用`axios.get`,`axios.post`等执行，其实不同的请求方式，最终调用的还都是request方法 
+
+        9. 我们先在Axios原型上添加这些请求的方式，然后在控制台看下结果
+            ```js
+            //这里就展示常用的4种
+            let methodArr = ["get", "post", "put", "delete"];
+            methodArr.forEach(method => {
+                Axios.prototype[method] = function(config){
+                    config.method = method;
+                    return this.request(config)
+                }
+            })
+
+            console.dir(Axios);            
+            ```
+
+            ![](./images/Axios原型上添加请求方法.jpg)
+
+        10. **混入模式** - 现在就是混入模式最巧妙的地方了，因为先在的axios是个函数，函数也是个对象，所以我们可以这么操作，强行给函数axios加上前面的请求方法
+            1. 先定义个混入的工具类
+                ```js
+                let utils = {
+                    extends(a, b){
+                        //a是函数, b是原型
+                        for (const key in b) {
+                            if(b.hasOwnProperty(key)){                
+                                if(typeof b[key] === "function"){
+                                    a[key] = b[key];
+                                }
+                            }
+                        }
+                    }
+                }                
+                ```
+            2. 然后在createInstance函数中使用它
+                ```js
+                function createInstance(){
+                    let context = new Axios();
+                    let instance = context.request;
+                    //把原型里的几个请求函数混入到instance里面
+                    utils.extends(instance, Axios.prototype);
+                    console.dir(instance)
+                    return instance;
+                }                
+                ```  
+            3. 然后看下我们的控制台，发现混入成功 
+
+                ![](./images/混入成功.jpg)  
+
+            4. 但实际上还有个细节问题，我们在页面中使用`axios.get`测试下  
+                ```js
+                axios.get({
+                    url: "/users",
+                }).then(res => {
+                    console.log(res);
+                })                
+                ``` 
+            5. 然后就发现有报错了，原因其实是this指向的问题
+
+                ![](./images/this指向问题.jpg)
+
+            6. 所以我们在混入的extends方法中在bind改变this指向  
+                ```js
+                let utils = {
+                    extends(a, b, c){
+                        //a是函数, b是原型, c是改变this指向的对象
+                        for (const key in b) {
+                            if(b.hasOwnProperty(key)){                
+                                if(typeof b[key] === "function"){
+                                    a[key] = b[key].bind(c); //这里改变this指向
+                                }
+                            }
+                        }
+                    }
+                }                
+                ```  
+                ```js
+                function createInstance(){
+                    let context = new Axios();
+                    let instance = context.request;
+                    //把原型里的几个请求函数混入到instance里面
+                    utils.extends(instance, Axios.prototype, context);//这里传入的context就是真正的this指向，需要指向axios这个实例，然后就可以成功调用到request方法
+                    console.dir(instance)
+                    return instance;
+                }                
+                ```
+            7. 现在我们混入了原型的方法，然后我们这次在混入下属性(constructor里的属性混入)，比如我们在constructor里添加`this.test = "一些属性"`，然后改造下我们的extends方法,因为是属性，所以就不需要在改变this指向了
+                ```js
+                let utils = {
+                    extends(a, b, c){
+                        //3个参数 a是函数, b是原型, c是改变this指向的对象
+                        //2个参数 a是函数, b是实例
+                        for (const key in b) {
+                            if(b.hasOwnProperty(key)){                
+                                if(typeof b[key] === "function"){
+                                    //方法
+                                    a[key] = b[key].bind(c);
+                                }else{
+                                    //属性
+                                    a[key] = b[key]; //新的分支，混入属性
+                                }
+                            }
+                        }
+                    }
+                }                
+                ``` 
+                ```js
+                function createInstance(){
+                    let context = new Axios();
+                    let instance = context.request;
+                    //把原型里的几个请求函数混入到instance里面
+                    utils.extends(instance, Axios.prototype, context);
+                    //把实例中的属性混入到instance中
+                    utils.extends(instance, context);
+                    console.dir(instance)
+                    return instance;
+                }                
+                ```  
+
+                ![](./images/一个简易的混入模式.jpg)
+
+            8. 然后我们这个混入模式就实现好了，到现在为止，我们既可以使用`axios()`，也可以使用`axions.get()`,并且我们也混入了实例的一些属性    
+
+
+             
+
+        11. 讲好混入模式后，我们就要讲下拦截器是怎么实现的
+        12. 先来完善下我们的request方法，这里就需要写ajax那一套原生的东西`xhr`
 > 知道你不过瘾继续吧
 * [目录](../../README.md)
 * [上一篇-跨域的主流解决方案](../day-22/跨域的主流解决方案.md) 

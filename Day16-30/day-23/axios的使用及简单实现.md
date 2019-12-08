@@ -386,11 +386,61 @@
 
             8. 然后我们这个混入模式就实现好了，到现在为止，我们既可以使用`axios()`，也可以使用`axions.get()`,并且我们也混入了实例的一些属性    
 
+        11. 我们先来完善下我们的request方法，测试下我们写的混入模式，这里就需要写ajax那一套原生的东西`xhr`
+            ```js
+            request(config){
+                // console.log("发送请求")
+                // console.log(config);
+                return new Promise((resolve, reject) => {
+                    let xhr = new XMLHttpRequest();
+                    //解构，这里还需要用到默认值的语法
+                    let {url="", data=null, method="get", header={}} = config;
+                    xhr.open(method, url, true); //这里就简单的写死了true，true代表异步
+                    xhr.onload = function(){
+                        resolve(xhr.responseText); //这里也简单的返回xhr.responseText，实际上axios这里也做了封装
+                    }
+                    xhr.send(data)
+                })
+            }
+            ```
+        12. 前端的页面当然就是我们axios的2种写法，这里记得在去看下我们后端的接口`/users`是否实现有问题，把之前的跨域服务器在改回正常的请求
+            ```js
+            // console.log("页面直接写的script")
+            axios({
+                method: "get",
+                url: "/users",
+            }).then(res => {
+                console.log(res);
+            })
+            axios.get({
+                url: "/users",
+            }).then(res => {
+                console.log(res);
+            })            
+            ```
+            ```js
+            router.get("/users", async ctx => {
+                ctx.body = [
+                    {
+                        id: 1,
+                        name: "gqf - 3000",
+                        gender: "M"
+                    },
+                    {
+                        id: 2,
+                        name: "zhangsan - 3000",
+                        gender: "F"
+                    }
+                ]
+                //这里是实现服务器axios 跨域请求
+                // let res = await axios.get("http://localhost:4000/users");
+                // ctx.body = res.data;
+            })            
+            ```
+        13. 然后发现没有任何问题,页面正常打印了结果 
 
-             
+            ![](./images/测试混入模式.jpg) 
 
-        11. 讲好混入模式后，我们就要讲下拦截器是怎么实现的
-        12. 先来完善下我们的request方法，这里就需要写ajax那一套原生的东西`xhr`
 > 知道你不过瘾继续吧
 * [目录](../../README.md)
 * [上一篇-跨域的主流解决方案](../day-22/跨域的主流解决方案.md) 

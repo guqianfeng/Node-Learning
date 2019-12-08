@@ -21,9 +21,16 @@ class Axios{
     }
     request(config){
         // console.log("发送请求")
-        console.log(config);
+        // console.log(config);
         return new Promise((resolve, reject) => {
-            resolve("then里面的res")
+            let xhr = new XMLHttpRequest();
+            //解构，这里还需要用到默认值的语法
+            let {url="", data=null, method="get", header={}} = config;
+            xhr.open(method, url, true); //这里就简单的写死了true，true代表异步
+            xhr.onload = function(){
+                resolve(xhr.responseText); //这里也简单的返回xhr.responseText，实际上axios这里也做了封装
+            }
+            xhr.send(data)
         })
     }
 }
@@ -46,7 +53,7 @@ function createInstance(){
     utils.extends(instance, Axios.prototype, context);
     //把实例中的属性混入到instance中
     utils.extends(instance, context);
-    console.dir(instance)
+    // console.dir(instance)
     return instance;
 }
 

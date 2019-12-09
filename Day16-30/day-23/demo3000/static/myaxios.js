@@ -18,10 +18,30 @@ let utils = {
 class Axios{
     constructor(){
         this.test = "一些属性";
+        this.interceptors = {
+            request: new InterceptorManager(),
+            response: new InterceptorManager(),
+        }
     }
     request(config){
-        // console.log("发送请求")
-        // console.log(config);
+        //组装数组
+        let chain = [this.xhr, undefined];
+        this.interceptors.request.handles.forEach(interceptor => {
+            chain.unshift(interceptor.fulfilled, interceptor.rejected);
+        })
+        this.interceptors.response.handles.forEach(interceptor => {
+            chain.push(interceptor.fulfilled, interceptor.rejected);
+        })
+        // console.log(chain);
+        //按照顺序执行
+        let promise = Promise.resolve(config);
+        while(chain.length > 0){
+            promise = promise.then(chain.shift(), chain.shift());
+        }
+        return promise;
+    }
+
+    xhr(config){
         return new Promise((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             //解构，这里还需要用到默认值的语法
@@ -31,6 +51,18 @@ class Axios{
                 resolve(xhr.responseText); //这里也简单的返回xhr.responseText，实际上axios这里也做了封装
             }
             xhr.send(data)
+        })
+    }
+}
+
+class InterceptorManager{
+    constructor(){
+        this.handles = [];
+    }
+    use(fulfilled, rejected){
+        this.handles.push({
+            fulfilled,
+            rejected
         })
     }
 }
@@ -48,7 +80,7 @@ methodArr.forEach(method => {
 
 function createInstance(){
     let context = new Axios();
-    let instance = context.request;
+    let instance = context.request.bind(context);
     //把原型里的几个请求函数混入到instance里面
     utils.extends(instance, Axios.prototype, context);
     //把实例中的属性混入到instance中

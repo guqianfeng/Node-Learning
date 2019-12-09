@@ -441,6 +441,127 @@
 
             ![](./images/测试混入模式.jpg) 
 
+        14. 下面我们就来实现拦截器，前面也简单提了下，相当于组装了个数组，拦截请求就unshift，拦截响应就push，最终数组组装好就是这个样子`[拦截请求2, 拦截请求1, 请求, 拦截响应1, 拦截响应2]`
+
+        15. 我们先来看下原版的axios的拦截器是怎么使用的 
+            ```js
+            //请求之前
+            axios.interceptors.request.use(config => {
+                console.log('request - first')
+                return config;
+            }, err => {
+                console.log(err);
+            })
+
+            //响应之后
+            axios.interceptors.response.use(res => {
+                console.log('response - first')
+                return res;
+            }, err => {
+                console.log(err);
+            })          
+            ```  
+        16. 我们可以搞一个新的类`InterceptorManager`，专门把所有的拦截器收集起来，记住是收集起来并不是执行，即use方法只是用来收集拦截器，等真正开始请求的时候，才开始执行我们之前说的组装好的那个数组,这里也有个小细节，use这里接受的是2个参数，一个是成功的回调函数一个是失败的回调函数  
+            ```js
+            class InterceptorManager{
+                constructor(){
+                    this.handles = [];
+                }
+                use(fulfilled, rejected){
+                    this.handles.push({
+                        fulfilled,
+                        rejected
+                    })
+                }
+            }            
+            ```  
+        17. 然后我们在Axios类的构造器中，添加属性`interceptors`  
+            ```js
+            constructor(){
+                this.test = "一些属性";
+                this.interceptors = {
+                    request: new InterceptorManager(),
+                    response: new InterceptorManager(),
+                }
+            }            
+            ```   
+        18. 因为之前的混合模式，我们既可以把原型上的方法混入进去，也可以把实例上的属性混入进去，所以我们可以通过`axios.interceptors.response.use`去添加拦截器
+
+        19. 然后我们就可以在Axios的request方法中搞点事情了
+            1. 先单独提取xhr方法，为了方便后续方法的封装
+                ```js
+                class Axios{
+                    constructor(){
+                        this.test = "一些属性";
+                        this.interceptors = {
+                            request: new InterceptorManager(),
+                            response: new InterceptorManager(),
+                        }
+                    }
+                    request(config){
+                        
+                    }
+
+                    xhr(config){
+                        return new Promise((resolve, reject) => {
+                            let xhr = new XMLHttpRequest();
+                            //解构，这里还需要用到默认值的语法
+                            let {url="", data=null, method="get", header={}} = config;
+                            xhr.open(method, url, true); //这里就简单的写死了true，true代表异步
+                            xhr.onload = function(){
+                                resolve(xhr.responseText); //这里也简单的返回xhr.responseText，实际上axios这里也做了封装
+                            }
+                            xhr.send(data)
+                        })
+                    }
+                }                
+                ```
+            2. 组装我们之前说的数组,因为回调函数是分为成功失败，所以数组中应该是成双成对出现的，所以我们的xhr之后拼接个undefined，
+            然后组装的数组大概样子应该是`[成功2, 失败2, 成功1, 失败1, xhr, undefined, 成功1, 失败1, 成功2, 失败2]`，注意这里还有个this指向的问题，需要修改`let instance = context.request.bind(context);`   
+                ```js
+                request(config){
+                    //组装数组
+                    let chain = [this.xhr, undefined];
+                    this.interceptors.request.handles.forEach(interceptor => {
+                        chain.unshift(interceptor.fulfilled, interceptor.rejected);
+                    })
+                    this.interceptors.response.handles.forEach(interceptor => {
+                        chain.push(interceptor.fulfilled, interceptor.rejected);
+                    })
+                    console.log(chain);
+                }                                
+                ``` 
+            3. 因为现在还没有做promise的处理，所以页面是会报错的，但是我们组装的数组是可以看到的，当前就加了一个请求的拦截器，和一个响应的拦截器，所以我们的chain应该是有6项 
+
+                ![](./images/组装的chain.jpg) 
+
+            4. 然后就可以通过promise去处理了，完整的request的代码是这样的
+                ```js
+                request(config){
+                    //组装数组
+                    let chain = [this.xhr, undefined];
+                    this.interceptors.request.handles.forEach(interceptor => {
+                        chain.unshift(interceptor.fulfilled, interceptor.rejected);
+                    })
+                    this.interceptors.response.handles.forEach(interceptor => {
+                        chain.push(interceptor.fulfilled, interceptor.rejected);
+                    })
+                    // console.log(chain);
+                    //按照顺序执行
+                    let promise = Promise.resolve(config);
+                    while(chain.length > 0){
+                        promise = promise.then(chain.shift(), chain.shift());
+                    }
+                    return promise;
+                }                
+                ```    
+            5. 然后就可以看下我们控制台这边的打印，来验证下封装的myaxios，根据结果来看应该是没有问题了
+
+                ![](./images/拦截器实现成功.jpg)
+
+        20. 接下来就是来实现适配器，实现后端的axios            
+
+
 > 知道你不过瘾继续吧
 * [目录](../../README.md)
 * [上一篇-跨域的主流解决方案](../day-22/跨域的主流解决方案.md) 

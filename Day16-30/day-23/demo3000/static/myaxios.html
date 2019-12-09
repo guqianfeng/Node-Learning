@@ -11,6 +11,23 @@
     <script src="/myaxios.js"></script>
     <script>
         // console.log("页面直接写的script")
+        //请求之前
+            axios.interceptors.request.use(config => {
+            console.log('request - first')
+            return config;
+        }, err => {
+            console.log(err);
+        })
+
+        //响应之后
+        axios.interceptors.response.use(res => {
+            console.log('response - first')
+            return res;
+        }, err => {
+            console.log(err);
+        })
+
+        
         axios({
             method: "get",
             url: "/users",

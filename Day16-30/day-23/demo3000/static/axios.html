@@ -16,22 +16,30 @@
             axios.interceptors.request.use(config => {
                 console.log('request - first')
                 return config;
+            }, err => {
+                console.log(err);
             })
 
             //响应之后
             axios.interceptors.response.use(res => {
                 console.log('response - first')
                 return res;
+            }, err => {
+                console.log(err);
             })
 
             axios.interceptors.request.use(config => {
                 console.log("request - second");
                 return config;
+            }, err => {
+                console.log(err);
             })
 
             axios.interceptors.response.use(res => {
                 console.log('response - second')
                 return res;
+            }, err => {
+                console.log(err);
             })
 
             // axios({

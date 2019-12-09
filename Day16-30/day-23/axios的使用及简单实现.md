@@ -7,9 +7,10 @@
 
 > 练习
 * 准备工作
-    1. 先安装下axios，使用`yarn add axios -S`
-    2. 我们可以看下安装后axios目录下的dist文件，前端客户端使用axios的时候我们要把axios.js放到我们静态文件中
-    3. 老样子我们先建2个项目，3000和4000，需要安装koa, koa-router, koa-body, koa-static然后编写服务端代码并且能把项目跑起来，简单写点接口测试下，这里就不赘述了
+    1. 新建个项目，记得初始化`yarn init -y`
+    2. 再安装下axios，使用`yarn add axios -S`
+    3. 我们可以看下安装后axios目录下的dist文件，前端客户端使用axios的时候我们要把axios.js放到我们静态文件中
+    4. 老样子我们再建2个项目，3000和4000，需要安装koa, koa-router, koa-body, koa-static然后编写服务端代码并且能把项目跑起来，简单写点接口测试下，这里就不赘述了
 * axios的使用
     1. 客户端的使用
         1. 在3000项目static文件下新建一个axios.html的文件
@@ -80,7 +81,7 @@
 
             ![](./images/post请求控制台打印.jpg)  
 
-        9. 关于请求方面就显示这2种，其他的可以详细的看[文档](https://github.com/axios/axios)   
+        9. 关于请求方面，我就先演示get和post，其他的可以详细的看[文档](https://github.com/axios/axios)   
 
         10. 接下来还要演示下拦截器, 可以拦截所有的请求或者响应
         11. 先上拦截器代码

@@ -570,7 +570,8 @@
                     }
                     http(config){
                         //发送服务端请求 服务器代理
-                        console.log("node 服务端发送请求")
+                        console.log("node 服务端发送请求");
+                        return '证明node服务端已经发送请求';
                     }
                     xhr(config){
                         //发送客户端请求
@@ -623,8 +624,14 @@
                 ```  
             5. 接着完善我们的dispatchXhr方法 
                 1. 首先我们可以用一些特殊的变量，去判断是服务端使用还是客户端使用
-                    * 客户端有window，服务端没有window
-                    * 客服端没有process，服务端有process   
+                    * 客户端有window，客户端没有process
+
+                        ![](./images/客户端特殊值打印.jpg)
+
+                    * 服务端没有window，服务端有process 
+
+                        ![](./images/服务端特殊值打印.jpg)
+
                 2. 代码如下
                     ```js
                     dispatchXhr(config){
@@ -643,7 +650,42 @@
                     //服务端
                     module.exports = axios;
                 }                
-                ```                   
+                ```
+            7. 好了现在我们就在node环境先玩一下我们前面封装myaxios
+                1. 在demo3000下新建一个axioshttp.js   
+                2. 然后require我们前面封装的myaxios   
+                    ```js
+                    const axios = require('./static/myaxios')
+                    console.log(axios);                    
+                    ```
+                3. 通过`node axioshttp.js`执行下,发现能打印我们的结果 
+
+                    ![](./images/服务端引入myaxios打印下结果.jpg)     
+
+                4. 然后我们就调用下方法呗
+                    ```js
+                    const axios = require('./static/myaxios')
+                    // console.log(axios);
+
+                    axios({
+                        url: "http://localhost:4000/users",
+                    }).then(res => {
+                        console.log(res);
+                    })                    
+                    ```  
+                5. 还记得我们之前封装的myaxios是怎么写的吗，看这里
+                    ```js
+                    http(config){
+                        //发送服务端请求 服务器代理
+                        console.log("node 服务端发送请求")
+                        return '证明node服务端已经发送请求'
+                    }            
+                    ```
+                6. 然后我们再次运行`node axioshttp.js`，证明没有什么问题 
+
+                    ![](./images/再次运行看服务端运行结果.jpg)  
+
+            8. 接着就是我们最后一步了，实现myaxios中http的方法                               
 
 
 > 知道你不过瘾继续吧

@@ -60,6 +60,7 @@ class Adapter{
     http(config){
         //发送服务端请求 服务器代理
         console.log("node 服务端发送请求")
+        return '证明node服务端已经发送请求'
     }
     xhr(config){
         //发送客户端请求

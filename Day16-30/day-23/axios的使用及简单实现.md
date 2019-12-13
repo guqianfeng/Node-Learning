@@ -560,7 +560,90 @@
 
                 ![](./images/拦截器实现成功.jpg)
 
-        20. 接下来就是来实现适配器，实现后端的axios            
+        20. 接下来就是来实现适配器，实现后端的axios
+            1. 我们用一个适配器的类去管理，取名为Adapter 
+            2. 因为统一用这个发送请求，所以我们把之前Axios类中的xhr也放(剪切)到这个类中
+                ```js
+                class Adapter{
+                    constructor(){
+
+                    }
+                    http(config){
+                        //发送服务端请求 服务器代理
+                        console.log("node 服务端发送请求")
+                    }
+                    xhr(config){
+                        //发送客户端请求
+                        return new Promise((resolve, reject) => {
+                            let xhr = new XMLHttpRequest();
+                            //解构，这里还需要用到默认值的语法
+                            let {url="", data=null, method="get", header={}} = config;
+                            xhr.open(method, url, true); //这里就简单的写死了true，true代表异步
+                            xhr.onload = function(){
+                                resolve(xhr.responseText); //这里也简单的返回xhr.responseText，实际上axios这里也做了封装
+                            }
+                            xhr.send(data)
+                        })
+                    }
+                }                
+                ```
+            3. 在Axios的构造器中，实例化我们的适配器  
+                ```js
+                constructor(){
+                    this.test = "一些属性";
+                    this.interceptors = {
+                        request: new InterceptorManager(),
+                        response: new InterceptorManager(),
+                    }
+                    this.adapter = new Adapter();
+                }                
+                ```  
+            4. 然后我们在Axios类中新增个方法，dispatchXhr,当然需要注意的是，request中使用的this.xhr就要改成dispatchXhr了，注意这里还有this指向的问题，所以还需要bind下
+                ```js
+                request(config){
+                    //组装数组
+                    let chain = [this.dispatchXhr.bind(this), undefined];
+                    this.interceptors.request.handles.forEach(interceptor => {
+                        chain.unshift(interceptor.fulfilled, interceptor.rejected);
+                    })
+                    this.interceptors.response.handles.forEach(interceptor => {
+                        chain.push(interceptor.fulfilled, interceptor.rejected);
+                    })
+                    // console.log(chain);
+                    //按照顺序执行
+                    let promise = Promise.resolve(config);
+                    while(chain.length > 0){
+                        promise = promise.then(chain.shift(), chain.shift());
+                    }
+                    return promise;
+                }
+                dispatchXhr(config){
+
+                }                
+                ```  
+            5. 接着完善我们的dispatchXhr方法 
+                1. 首先我们可以用一些特殊的变量，去判断是服务端使用还是客户端使用
+                    * 客户端有window，服务端没有window
+                    * 客服端没有process，服务端有process   
+                2. 代码如下
+                    ```js
+                    dispatchXhr(config){
+                        if(typeof process !== "undefined"){
+                            //服务端
+                            return this.adapter.http(config);
+                        }else{
+                            //客户端
+                            return this.adapter.xhr(config)
+                        }
+                    }                    
+                    ``` 
+            6. 接着我们在来处理下服务端node需要导出的问题，因为封装的myaxios需要导出后，然后在通过require才能使用，所以我们在最后写上模块导出
+                ```js
+                if(typeof process !== "undefined"){
+                    //服务端
+                    module.exports = axios;
+                }                
+                ```                   
 
 
 > 知道你不过瘾继续吧

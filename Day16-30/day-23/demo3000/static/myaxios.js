@@ -22,10 +22,11 @@ class Axios{
             request: new InterceptorManager(),
             response: new InterceptorManager(),
         }
+        this.adapter = new Adapter();
     }
     request(config){
         //组装数组
-        let chain = [this.xhr, undefined];
+        let chain = [this.dispatchXhr.bind(this), undefined];
         this.interceptors.request.handles.forEach(interceptor => {
             chain.unshift(interceptor.fulfilled, interceptor.rejected);
         })
@@ -40,8 +41,28 @@ class Axios{
         }
         return promise;
     }
+    dispatchXhr(config){
+        if(typeof process !== "undefined"){
+            //服务端
+            return this.adapter.http(config);
+        }else{
+            //客户端
+            return this.adapter.xhr(config)
+        }
+    }
 
+}
+
+class Adapter{
+    constructor(){
+
+    }
+    http(config){
+        //发送服务端请求 服务器代理
+        console.log("node 服务端发送请求")
+    }
     xhr(config){
+        //发送客户端请求
         return new Promise((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             //解构，这里还需要用到默认值的语法
@@ -90,4 +111,9 @@ function createInstance(){
 }
 
 let axios = createInstance();
+
+if(typeof process !== "undefined"){
+    //服务端
+    module.exports = axios;
+}
 

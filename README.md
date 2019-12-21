@@ -5,6 +5,9 @@
 * 巩固知识，温故而知新
 * 每次练习会放在demo的文件夹中,可以看到源码
 * node后端脚手架koa-generator,可以全局安装`npm i koa-generator -g`
+    1. koa2 project_name
+    2. cd project_name
+    3. yarn 
 * 愿萌新与我一起成长，愿大佬轻喷指正错误~
 
 > 目录

@@ -7,7 +7,8 @@
 * node后端脚手架koa-generator,可以全局安装`npm i koa-generator -g`
     1. koa2 project_name
     2. cd project_name
-    3. yarn 
+    3. yarn
+* egg贼香，大家可以尝试下，[快速入门](https://eggjs.org/zh-cn/intro/quickstart.html) 
 * 愿萌新与我一起成长，愿大佬轻喷指正错误~
 
 > 目录
